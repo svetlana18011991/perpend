@@ -155,6 +155,34 @@
 #toolbar a.creator-signature{display:inline-block;text-decoration:none;color:#9b8982;transition:color .15s ease;text-underline-offset:3px}
 #toolbar a.creator-signature:hover,#toolbar a.creator-signature:focus-visible{color:#417c82;text-decoration:underline}
 #toolbar a.creator-signature:focus-visible{outline:2px solid #417c82;outline-offset:3px;border-radius:3px}
+
+/* Практикум: черновик не перекрывает условие и чертёж */
+.task-body.with-scratch{grid-template-columns:minmax(0,1.08fr) minmax(0,.94fr) minmax(0,1.10fr);gap:12px}
+.task-body.with-scratch .task-main{padding:17px 18px;min-width:0}
+.task-body.with-scratch .task-kicker{font-size:14px;margin-bottom:10px}
+.task-body.with-scratch .task-prompt{font-size:19px;line-height:1.33}
+.task-body.with-scratch .task-prompt .task-list{font-size:18px;gap:4px;margin-top:8px}
+.task-body.with-scratch .task-actions{gap:7px;margin-top:14px}
+.task-body.with-scratch .task-actions .btn{font-size:15px;padding:9px 11px}
+.task-body.with-scratch .task-reveal{font-size:16px;padding:10px 11px}
+.task-body.with-scratch .task-diagram-panel{padding:14px 12px 12px;min-width:0;overflow:hidden}
+.task-body.with-scratch .task-diagram-panel svg{width:100%;height:auto;max-height:330px}
+.task-body.with-scratch .diagram-top{font-size:16px}
+.task-body.with-scratch .diagram-bottom{font-size:13px}
+#taskScratchDock{display:none;min-width:0;min-height:0;height:100%;}
+.task-body.with-scratch #taskScratchDock{display:block;}
+#scratchpad.docked{display:flex;position:relative;left:auto!important;top:auto!important;right:auto!important;bottom:auto!important;width:100%;height:100%;min-width:0;min-height:0;max-height:none;resize:none;z-index:auto;border-radius:19px;box-shadow:none;border-color:#cbdcdb}
+#scratchpad.docked #padDrag{height:45px;min-height:45px;cursor:default;padding:0 10px;gap:5px}
+#scratchpad.docked #padDrag>span:first-child{font-size:16px;white-space:nowrap}
+#scratchpad.docked #padDrag>span:nth-child(2){display:none}
+#scratchpad.docked #padTools{height:auto;min-height:53px;gap:5px;padding:6px 7px;flex-wrap:nowrap}
+#scratchpad.docked #padTools button{font-size:12px;padding:5px 5px}
+#scratchpad.docked #padTools .swatch{height:19px;width:19px;flex-shrink:0}
+#scratchpad.docked #padTools .tool-sep{margin:0 1px}
+#scratchpad.docked #canvasWrap{min-height:0;flex:1}
+#scratchpad.docked #closeScratch{font-size:16px;padding:5px 8px}
+#openScratch.task-scratch-open{background:#e1eeee!important;color:#326c70!important}
+
 </style>
 </head>
 <body>
@@ -339,7 +367,7 @@
 </section>
 
 <!-- 18 — самостоятельный практикум -->
-<section class="slide" data-phase="Практикум" data-time="6" data-note="Практикум по выбору: 6 заданий разной сложности, не обязательно решать все. 1 — распознавание взаимно перпендикулярных отрезков и лучей; 2 — доказательство через биссектрисы; 3–5 — вычисления и обоснования; 6 — доказательство равенства углов. Учитель выбирает задачи по темпу класса. Нумерация внутренняя, 1–6; числовые данные изменены. У каждой задачи есть чертёж, скрытая подсказка и скрытое решение. Предлагайте ученикам сначала записать «Дано — Найти/Доказать», выполнить схему, лишь затем открывайте подсказку. Развиваем действия распознавания, построения вспомогательного чертежа, вычисления и доказательства; проверяем по обоснованию." >
+<section class="slide" data-phase="Практикум" data-time="6" data-note="Практикум по выбору: 6 заданий разной сложности, не обязательно решать все. 1 — распознавание взаимно перпендикулярных отрезков и лучей; 2 — доказательство через биссектрисы; 3–5 — вычисления и обоснования; 6 — доказательство равенства углов. Учитель выбирает задачи по темпу класса. Нумерация внутренняя, 1–6; числовые данные изменены. У каждой задачи есть чертёж, скрытая подсказка и скрытое решение. На этом слайде кнопка «Черновик» внизу превращает практикум в три области: условие, чертёж и рабочее поле. Черновик не заслоняет материалы; записи сохраняются отдельно для каждой из шести задач. Предлагайте ученикам сначала записать «Дано — Найти/Доказать», выполнить схему, лишь затем открывайте подсказку. Развиваем действия распознавания, построения вспомогательного чертежа, вычисления и доказательства; проверяем по обоснованию." >
 <div class="eyebrow"><span class="line"></span> Применяем знания</div>
 <h2 class="h2" style="font-size:50px;margin-bottom:10px">Геометрический практикум</h2>
 <p class="intro" style="font-size:22px;margin-bottom:17px">Выберите задачу для решения.</p>
@@ -360,6 +388,7 @@
   <div id="taskAnswer" class="task-reveal result" hidden></div>
  </div>
  <div class="task-diagram-panel"><div class="diagram-top">Чертёж к задаче <span id="taskDiagramNo">1</span></div><div id="taskDiagram"></div><div class="diagram-bottom">Чертёж условный. Рассуждайте по данным.</div></div>
+ <div id="taskScratchDock" aria-label="Черновик рядом с задачей"></div>
 </div>
 </section>
 
@@ -413,7 +442,7 @@ const lessonGroups=[["Мотивация","1–2","Наблюдение прям
 function sizeStage(){let w=innerWidth-35,h=innerHeight-86;let s=Math.min(w/1440,h/810);stage.style.transform=`scale(${s})`;stage.style.left=`${(innerWidth-1440*s)/2}px`;stage.style.top=`${Math.max(4,(innerHeight-67-810*s)/2)}px`;}
 function slideName(s){const h=s.querySelector('.h1,.h2');return h? h.textContent.replace(/\s+/g,' ').trim():'Слайд';}
 function closeProofs(){document.querySelectorAll('.proof-sheet.open').forEach(p=>p.classList.remove('open'));document.querySelectorAll('[data-proof]').forEach(b=>b.setAttribute('aria-expanded','false'));}
-function showSlide(index){if(index<0||index>=slides.length)return;slides[current].classList.remove('active');current=index;slides[current].classList.add('active');slides[current].scrollTop=0;slides[current].scrollLeft=0;$('slideCount').textContent=`${String(current+1).padStart(2,'0')} / ${slides.length}`;$('globalProgress').style.width=`${(current+1)/slides.length*100}%`;$('slideLabel').textContent=slideName(slides[current]);$('prev').disabled=current===0;$('next').disabled=current===slides.length-1;closeProofs();updateNotes();location.hash='slide-'+(current+1);if(window.__updateScratch)window.__updateScratch();}
+function showSlide(index){if(index<0||index>=slides.length)return;slides[current].classList.remove('active');current=index;slides[current].classList.add('active');slides[current].scrollTop=0;slides[current].scrollLeft=0;$('slideCount').textContent=`${String(current+1).padStart(2,'0')} / ${slides.length}`;$('globalProgress').style.width=`${(current+1)/slides.length*100}%`;$('slideLabel').textContent=slideName(slides[current]);$('prev').disabled=current===0;$('next').disabled=current===slides.length-1;closeProofs();updateNotes();location.hash='slide-'+(current+1);if(window.__syncScratch)window.__syncScratch();if(window.__updateScratch)window.__updateScratch();}
 function updateNotes(){const s=slides[current];$('notesTitle').textContent=slideName(s);$('notesText').textContent=s.dataset.note||'';$('notesTime').textContent='Время на слайд: '+s.dataset.time+' мин';$('notesSlideNo').textContent=(current+1)+'/'+slides.length;}
 $('prev').addEventListener('click',()=>showSlide(current-1));$('next').addEventListener('click',()=>showSlide(current+1));addEventListener('resize',sizeStage);sizeStage();
 $('fullScreenBtn').addEventListener('click',()=>{if(!document.fullscreenElement){document.documentElement.requestFullscreen?.();}else document.exitFullscreen?.();});
@@ -456,6 +485,7 @@ function renderTask(){const q=practicumTasks[activeTask],st=taskUiState[activeTa
  $('taskHintButton').textContent=st.hint?'Скрыть подсказку ↶':'Подсказка ↗';$('taskAnswerButton').textContent=st.answer?'Скрыть решение ↶':'Проверить решение ↗';
  $('taskHintButton').setAttribute('aria-expanded',String(st.hint));$('taskAnswerButton').setAttribute('aria-expanded',String(st.answer));
  document.querySelectorAll('.task-tab').forEach((btn,i)=>{btn.classList.toggle('active',i===activeTask);btn.setAttribute('aria-pressed',String(i===activeTask));});
+ if(window.__updateScratch)requestAnimationFrame(window.__updateScratch);
 }
 document.querySelectorAll('.task-tab').forEach(btn=>btn.addEventListener('click',()=>{activeTask=Number(btn.dataset.task);renderTask();}));
 $('taskHintButton').addEventListener('click',()=>{taskUiState[activeTask].hint=!taskUiState[activeTask].hint;renderTask();});
@@ -474,19 +504,30 @@ function startRace(){stopTimer();raceIndex=0;racePoints=0;raceRemaining=90;raceR
 $('startRace').onclick=startRace;$('raceRestart').onclick=startRace;$('raceNext').onclick=()=>{raceIndex++;showRaceQuestion()};
 // Embedded scratchpad with normalized paths, resizing, per-slide state.
 const scratch=$('scratchpad'),canvas=$('drawCanvas'),wrap=$('canvasWrap'),ctx=canvas.getContext('2d');let padMode='pen',padColor='#263e4a',drawing=false,lastPoint=null;const padStrokes=new Map();
+const PRACTICUM_INDEX=slides.findIndex(s=>s.dataset.phase==='Практикум');
+const scratchHome=document.body,taskScratchDock=$('taskScratchDock'),taskBody=taskScratchDock.closest('.task-body');
+function padKey(){return current===PRACTICUM_INDEX?'task-'+activeTask:'slide-'+current;}
+function getStrokes(){const key=padKey();if(!padStrokes.has(key))padStrokes.set(key,[]);return padStrokes.get(key)}
+// Keep canvas crisp when its parent is scaled with the presentation slide.
+function displayStrokes(){const w=canvas.clientWidth,h=canvas.clientHeight,ratio=Math.min(devicePixelRatio||1,2);if(w<=0||h<=0)return;canvas.width=Math.round(w*ratio);canvas.height=Math.round(h*ratio);ctx.setTransform(ratio,0,0,ratio,0,0);ctx.clearRect(0,0,w,h);const strokes=getStrokes();ctx.lineCap='round';ctx.lineJoin='round';for(const stroke of strokes){if(!stroke.points?.length)continue;ctx.strokeStyle=stroke.color;ctx.lineWidth=stroke.width;ctx.beginPath();stroke.points.forEach((p,i)=>{if(i===0)ctx.moveTo(p.x*w,p.y*h);else ctx.lineTo(p.x*w,p.y*h);});if(stroke.points.length===1){let p=stroke.points[0];ctx.lineTo(p.x*w+.02,p.y*h+.02)}ctx.stroke();}}
+function undockScratch(){if(!scratch.classList.contains('docked'))return;scratch.classList.remove('docked');taskBody.classList.remove('with-scratch');scratchHome.appendChild(scratch);}
+function dockScratch(){if(scratch.classList.contains('docked'))return;scratch.style.removeProperty('left');scratch.style.removeProperty('top');scratch.style.removeProperty('right');taskScratchDock.appendChild(scratch);scratch.classList.add('docked');taskBody.classList.add('with-scratch');}
+function syncScratch(){const inPracticum=current===PRACTICUM_INDEX;if(scratch.classList.contains('open')){if(inPracticum)dockScratch();else if(scratch.classList.contains('docked')){scratch.classList.remove('open');undockScratch();}}else undockScratch();$('openScratch').classList.toggle('task-scratch-open',scratch.classList.contains('open'));$('openScratch').textContent=inPracticum?'✎ Черновик рядом':'✎ Черновик';$('openScratch').title=inPracticum?'Открыть рабочее поле справа от условия и чертежа':'Открыть геометрический черновик';}
+window.__syncScratch=syncScratch;
 window.__updateScratch=()=>{if(scratch.classList.contains('open'))displayStrokes();};
-function getStrokes(){if(!padStrokes.has(current))padStrokes.set(current,[]);return padStrokes.get(current)}
-function displayStrokes(){const r=canvas.getBoundingClientRect();const ratio=Math.min(devicePixelRatio||1,2);if(r.width<=0||r.height<=0)return;canvas.width=Math.round(r.width*ratio);canvas.height=Math.round(r.height*ratio);ctx.setTransform(ratio,0,0,ratio,0,0);ctx.clearRect(0,0,r.width,r.height);const strokes=getStrokes();ctx.lineCap='round';ctx.lineJoin='round';for(const stroke of strokes){if(!stroke.points?.length)continue;ctx.strokeStyle=stroke.color;ctx.lineWidth=stroke.width;ctx.beginPath();stroke.points.forEach((p,i)=>{if(i===0)ctx.moveTo(p.x*r.width,p.y*r.height);else ctx.lineTo(p.x*r.width,p.y*r.height);});if(stroke.points.length===1){let p=stroke.points[0];ctx.lineTo(p.x*r.width+.02,p.y*r.height+.02)}ctx.stroke();}}
-function padOpen(){scratch.classList.add('open');setTimeout(displayStrokes,40);}function closeScratch(){scratch.classList.remove('open')};$('openScratch').onclick=()=>{if(scratch.classList.contains('open'))closeScratch();else padOpen()};$('closeScratch').onclick=closeScratch;
+function padOpen(){if(current===PRACTICUM_INDEX)dockScratch();scratch.classList.add('open');syncScratch();requestAnimationFrame(()=>requestAnimationFrame(displayStrokes));}
+function closeScratch(){scratch.classList.remove('open');undockScratch();syncScratch();}
+$('openScratch').onclick=()=>{if(scratch.classList.contains('open'))closeScratch();else padOpen()};$('closeScratch').onclick=closeScratch;
+syncScratch();
 function pointFromEvent(e){const r=canvas.getBoundingClientRect();return{x:Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)),y:Math.max(0,Math.min(1,(e.clientY-r.top)/r.height))}}
 function beginStroke(e){if(e.button!==0&&e.pointerType==='mouse')return;e.preventDefault();drawing=true;canvas.setPointerCapture(e.pointerId);let p=pointFromEvent(e);const st={color:padMode==='eraser'?'#ffffff':padColor,width:padMode==='eraser'?27:3.7,points:[p]};getStrokes().push(st);lastPoint=st;displayStrokes()}
 function continueStroke(e){if(!drawing||!lastPoint)return;lastPoint.points.push(pointFromEvent(e));displayStrokes()}
 function endStroke(){drawing=false;lastPoint=null}
 canvas.addEventListener('pointerdown',beginStroke);canvas.addEventListener('pointermove',continueStroke);canvas.addEventListener('pointerup',endStroke);canvas.addEventListener('pointercancel',endStroke);
 $('padPen').onclick=()=>{padMode='pen';$('padPen').classList.add('active-tool');$('padEraser').classList.remove('active-tool')};$('padEraser').onclick=()=>{padMode='eraser';$('padEraser').classList.add('active-tool');$('padPen').classList.remove('active-tool')};document.querySelectorAll('[data-color]').forEach(b=>b.onclick=()=>{padColor=b.dataset.color;padMode='pen';$('padPen').classList.add('active-tool');$('padEraser').classList.remove('active-tool');document.querySelectorAll('[data-color]').forEach(x=>x.classList.remove('active-color'));b.classList.add('active-color')});
-$('padClear').onclick=()=>{padStrokes.set(current,[]);displayStrokes()};$('padUndo').onclick=()=>{getStrokes().pop();displayStrokes()};new ResizeObserver(()=>{if(scratch.classList.contains('open'))displayStrokes()}).observe(wrap);
+$('padClear').onclick=()=>{padStrokes.set(padKey(),[]);displayStrokes()};$('padUndo').onclick=()=>{getStrokes().pop();displayStrokes()};new ResizeObserver(()=>{if(scratch.classList.contains('open'))displayStrokes()}).observe(wrap);
 // Drag scratchpad by its header without interfering with tools.
-let draggingPad=false,startX=0,startY=0,originX=0,originY=0;$('padDrag').addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;draggingPad=true;startX=e.clientX;startY=e.clientY;const r=scratch.getBoundingClientRect();originX=r.left;originY=r.top;$('padDrag').setPointerCapture(e.pointerId);});$('padDrag').addEventListener('pointermove',e=>{if(!draggingPad)return;const l=Math.max(0,Math.min(innerWidth-scratch.offsetWidth,originX+e.clientX-startX)),t=Math.max(0,Math.min(innerHeight-scratch.offsetHeight-60,originY+e.clientY-startY));scratch.style.left=l+'px';scratch.style.top=t+'px';scratch.style.right='auto';});$('padDrag').addEventListener('pointerup',()=>draggingPad=false);$('padDrag').addEventListener('pointercancel',()=>draggingPad=false);
+let draggingPad=false,startX=0,startY=0,originX=0,originY=0;$('padDrag').addEventListener('pointerdown',e=>{if(scratch.classList.contains('docked')||e.target.closest('button'))return;draggingPad=true;startX=e.clientX;startY=e.clientY;const r=scratch.getBoundingClientRect();originX=r.left;originY=r.top;$('padDrag').setPointerCapture(e.pointerId);});$('padDrag').addEventListener('pointermove',e=>{if(!draggingPad)return;const l=Math.max(0,Math.min(innerWidth-scratch.offsetWidth,originX+e.clientX-startX)),t=Math.max(0,Math.min(innerHeight-scratch.offsetHeight-60,originY+e.clientY-startY));scratch.style.left=l+'px';scratch.style.top=t+'px';scratch.style.right='auto';});$('padDrag').addEventListener('pointerup',()=>draggingPad=false);$('padDrag').addEventListener('pointercancel',()=>draggingPad=false);
 // A11y pointer/text: prevent toolbar controls from triggering slide arrows.
 })();
 </script>
